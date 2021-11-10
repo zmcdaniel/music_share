@@ -1,1 +1,1 @@
-# music_share
+1. npm install nodemon -g

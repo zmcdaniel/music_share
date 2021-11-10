@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<body>
+<h1>Music</h1>
+
+<audio id="audioPlayer" src="music.mp3" controls="controls"></audio>
+
+<span id="currentTime">0</span>
+
+<button id="takeControl">Take Control</button> | <button id="giveControl">Give up control</button>
+
+<script>
+	let socket = new WebSocket('ws://localhost:8080');
+    console.log("Hey");
+	let audioPlayer = document.getElementById('audioPlayer');
+	let currentTimeText = document.getElementById('currentTime');
+	let songData = {
+        currentTime: 0
+	}
+
+	socket.onmessage = function(receivedSongData) {
+		console.log("received:", JSON.parse(stuff.data));
+		currentTimeText.innerText = stuff.dat
+	};
+
+    audioPlayer.onplay = () => {
+	    console.log("play");
+		audioPlayer.currentTime = 0;
+    };
+	// Send time updates to listeners
+	audioPlayer.ontimeupdate = () => {
+		currentTimeText.innerText = audioPlayer.currentTime;
+		songData.currentTime = audioPlayer.currentTime;
+		socket.send(JSON.stringify(songData));
+    };
+
+
+</script>
+</body>
+</html>
