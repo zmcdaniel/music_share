@@ -2,8 +2,12 @@
 <html lang="en">
 <body>
 <h1>Music</h1>
+<!-- https://codepen.io/craigstroman/pen/aOyRYx -->
 
-<audio id="audioPlayer" src="music.mp3" controls="controls"></audio>
+<audio id="audioPlayer" preload="none" controls="controls" tabindex="0">
+    <source src="music.mp3" data-track-number="1" />
+    <source src="https://archive.org/download/calexico2006-12-02..flac16/calexico2006-12-02d1t02.mp3" data-track-number="2" />
+</audio>
 
 <span id="currentTime">0</span>
 
@@ -16,7 +20,13 @@
 	let currentTimeText = document.getElementById('currentTime');
 	let songData = {
         currentTime: 0
-	}
+	};
+
+	// working switch
+	// setTimeout(() => {
+    //     audioPlayer.setAttribute('src', 'https://archive.org/download/calexico2006-12-02..flac16/calexico2006-12-02d1t02.mp3');
+    //     audioPlayer.play();
+	// }, 5000);
 
 	socket.onmessage = function(receivedSongData) {
 		console.log("received:", JSON.parse(stuff.data));

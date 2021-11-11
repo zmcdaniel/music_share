@@ -43,5 +43,13 @@ function onSocketConnect(ws) {
 
 // Get local network IP address
 let networkInterfaces = os.networkInterfaces();
-console.log('Private Network IP: http://' + networkInterfaces['Ethernet'][4]['address'] + ':' + port)
+let privateIP = '';
+if (networkInterfaces.hasOwnProperty('Wi-Fi')) {
+	privateIP = networkInterfaces['Wi-Fi'][4]['address'];
+} else if (networkInterfaces.hasOwnProperty('Ethernet')) {
+	privateIP = networkInterfaces['Ethernet'][4]['address'];
+} else {
+	console.log(networkInterfaces);
+}
+console.log('Private Network IP: http://' + privateIP + ':' + port)
 console.log('Server started at http://localhost:' + port);
