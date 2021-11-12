@@ -1,5 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
+<head>
+    <script src="/socket.io/socket.io.js"></script>
+</head>
 <body>
 <h1>Music</h1>
 <!-- https://codepen.io/craigstroman/pen/aOyRYx -->
@@ -14,24 +17,21 @@
 <button id="takeControl">Take Control</button> | <button id="giveControl">Give up control</button>
 
 <script>
-	let socket = new WebSocket('ws://localhost:8080');
-    console.log("Hey");
 	let audioPlayer = document.getElementById('audioPlayer');
 	let currentTimeText = document.getElementById('currentTime');
 	let songData = {
         currentTime: 0
 	};
-
+	let socket = io();
+	socket.emit('song change', 'test');
+	socket.on('notify song change', function(msg) {
+        console.log("Song change notification");
+	});
 	// working switch
 	// setTimeout(() => {
     //     audioPlayer.setAttribute('src', 'https://archive.org/download/calexico2006-12-02..flac16/calexico2006-12-02d1t02.mp3');
     //     audioPlayer.play();
-	// }, 5000);
-
-	socket.onmessage = function(receivedSongData) {
-		console.log("received:", JSON.parse(stuff.data));
-		currentTimeText.innerText = stuff.dat
-	};
+	// }, 10000);
 
     audioPlayer.onplay = () => {
 	    console.log("play");
@@ -43,8 +43,6 @@
 		songData.currentTime = audioPlayer.currentTime;
 		socket.send(JSON.stringify(songData));
     };
-
-
 </script>
 </body>
 </html>
