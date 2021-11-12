@@ -6,43 +6,65 @@
 <body>
 <h1>Music</h1>
 <!-- https://codepen.io/craigstroman/pen/aOyRYx -->
+<h2>Currently in room: <span id="roomID"></span></h2>
+<label for="room">Room</label><input id="room" />
+<button onclick="roomChange()">Join Room</button>
 
-<audio id="audioPlayer" preload="none" controls="controls" tabindex="0">
+<audio id="audioPlayer" preload="none" tabindex="0" controls>
     <source src="music.mp3" data-track-number="1" />
     <source src="https://archive.org/download/calexico2006-12-02..flac16/calexico2006-12-02d1t02.mp3" data-track-number="2" />
 </audio>
+
+<button onclick="changeSong()">Next song</button>
 
 <span id="currentTime">0</span>
 
 <button id="takeControl">Take Control</button> | <button id="giveControl">Give up control</button>
 
 <script>
+    // Stage 1, collect room location
+    function roomChange() {
+    	let roomID = document.getElementById('room');
+    	console.log("Room changed", roomID.value);
+        socket.emit('room:change', roomID.value);
+    }
+    function changeSong() {
+    	console.log(">>changeSong() -- client changing song");
+        socket.emit('song:change', 'https://archive.org/download/calexico2006-12-02..flac16/calexico2006-12-02d1t02.mp3');
+    }
 	let audioPlayer = document.getElementById('audioPlayer');
 	let currentTimeText = document.getElementById('currentTime');
 	let songData = {
         currentTime: 0
 	};
+
+	// Received: Socket connection events
 	let socket = io();
-	socket.emit('song change', 'test');
-	socket.on('notify song change', function(msg) {
-        console.log("Song change notification");
+
+	socket.on('broadcasted:song:change', function(msg) {
+        console.log("Song change notification", msg);
+		audioPlayer.setAttribute('src', 'https://archive.org/download/calexico2006-12-02..flac16/calexico2006-12-02d1t02.mp3');
+		audioPlayer.play();
 	});
-	// working switch
-	// setTimeout(() => {
-    //     audioPlayer.setAttribute('src', 'https://archive.org/download/calexico2006-12-02..flac16/calexico2006-12-02d1t02.mp3');
-    //     audioPlayer.play();
-	// }, 10000);
 
     audioPlayer.onplay = () => {
 	    console.log("play");
 		audioPlayer.currentTime = 0;
     };
+
 	// Send time updates to listeners
 	audioPlayer.ontimeupdate = () => {
 		currentTimeText.innerText = audioPlayer.currentTime;
 		songData.currentTime = audioPlayer.currentTime;
 		socket.send(JSON.stringify(songData));
     };
+
+
+	// working switch
+	// setTimeout(() => {
+	//     audioPlayer.setAttribute('src', 'https://archive.org/download/calexico2006-12-02..flac16/calexico2006-12-02d1t02.mp3');
+	//     audioPlayer.play();
+	// }, 10000);
 </script>
 </body>
 </html>

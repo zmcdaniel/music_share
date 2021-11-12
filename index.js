@@ -1,31 +1,32 @@
 const express = require('express');
 const path = require('path');
 const os = require('os');
+const http = require('http');
+const { Server } = require("socket.io");
 
+// Create express and port
 const app = express();
 const port = process.env.PORT || 8080;
 
 // Web Socket / Long polling with socket.io
-const http = require('http');
 const server = http.createServer(app);
-const { Server } = require("socket.io");
 const io = new Server(server);
+
+// Socket handlers [imports]-- files that are used as 'listeners' for data from the client (front-end javascript)
+// these socket handlers respond back to the client application in real time, as the client is listening
+const registerInitHandlers = require('./socket_handlers/initHandler');
+const registerRoomHandlers = require('./socket_handlers/roomHandler');
+const registerSongHandlers = require('./socket_handlers/songHandler');
+
 
 // Socket events
 io.on('connection', (socket) => {
-	console.log('a user connected');
+	console.log("connectasdf");
+	registerInitHandlers(io, socket); // user connect, disconnect, etc
 
-	socket.on('disconnect', () => {
-		console.log('user disconnected');
-	});
-	socket.on('song change', (msg) => {
-		console.log('message: ' + msg);
-
-		// emit message to everyone
-		io.emit('notify song change', msg);
-	});
+	registerRoomHandlers(io, socket); // user changes a room
+	registerSongHandlers(io, socket); // user changes a song
 });
-
 
 // Static Routes
 app.get('/', function(req, res) {
