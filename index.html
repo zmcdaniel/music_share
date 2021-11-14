@@ -27,10 +27,14 @@
     	let roomID = document.getElementById('room');
     	console.log("Room changed", roomID.value);
         socket.emit('room:change', roomID.value);
+        localStorage.setItem('room', roomID.value); // todo: security
     }
     function changeSong() {
     	console.log(">>changeSong() -- client changing song");
-        socket.emit('song:change', 'https://archive.org/download/calexico2006-12-02..flac16/calexico2006-12-02d1t02.mp3');
+        socket.emit('song:change', {
+        	'room': localStorage.getItem('room'),
+        	'song': 'https://archive.org/download/calexico2006-12-02..flac16/calexico2006-12-02d1t02.mp3'
+		});
     }
 	let audioPlayer = document.getElementById('audioPlayer');
 	let currentTimeText = document.getElementById('currentTime');
@@ -59,12 +63,6 @@
 		socket.send(JSON.stringify(songData));
     };
 
-
-	// working switch
-	// setTimeout(() => {
-	//     audioPlayer.setAttribute('src', 'https://archive.org/download/calexico2006-12-02..flac16/calexico2006-12-02d1t02.mp3');
-	//     audioPlayer.play();
-	// }, 10000);
 </script>
 </body>
 </html>
